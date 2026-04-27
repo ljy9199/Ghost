@@ -1,0 +1,670 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+		<title>心理调查问卷</title>
+		<style>
+			* {
+				margin: 0;
+				padding: 0;
+				box-sizing: border-box;
+				font-family: "SimSun", "Courier New", monospace;
+				font-size: 14px;
+			}
+
+			html, body {
+				width: 100%;
+				min-height: 100vh;
+				background: #f7f8fa;
+				display: flex;
+				justify-content: center;
+				align-items: center;
+				padding: 10px;
+			}
+
+			/* 恐怖黑屏遮罩 */
+			.terror-mask {
+				position: fixed;
+				top: 0;
+				left: 0;
+				width: 100vw;
+				height: 100vh;
+				background: #000;
+				z-index: 9999;
+				display: flex;
+				justify-content: center;
+				align-items: center;
+			}
+
+			.terror-text {
+				color: #d80000;
+				font-size: 16px;
+				letter-spacing: 6px;
+				white-space: nowrap;
+			}
+
+			.box {
+				background: white;
+				width: 100%;
+				max-width: 480px;
+				padding: 25px 20px;
+				border-radius: 12px;
+				box-shadow: 0 2px 15px rgba(0, 0, 0, 0.05);
+				position: relative;
+				z-index: 10;
+				transition: opacity 0.3s;
+				display: none; /* 默认隐藏 */
+			}
+
+			.title {
+				font-size: 16px;
+				margin-bottom: 20px;
+				text-align: center;
+				color: #333;
+				font-weight: bold;
+			}
+
+			.progress {
+				text-align: center;
+				font-size: 12px;
+				color: #666;
+				margin-bottom: 15px;
+			}
+
+			.question {
+				font-size: 14px;
+				line-height: 1.6;
+				color: #222;
+				min-height: 30px;
+			}
+
+			.options {
+				display: flex;
+				flex-direction: column;
+				/* 减小选项与按钮组的间距 */
+				margin-bottom: 15px;
+				gap: 12px;
+			}
+
+			.option {
+				padding: 12px 14px;
+				border: 1px solid #ddd;
+				border-radius: 8px;
+				cursor: pointer;
+				font-size: 14px;
+				background: #fff;
+				transition: all 0.2s;
+				line-height: 1.4;
+			}
+
+			.option.selected {
+				background: #dbdbdb;
+				border-color: #aaa;
+			}
+
+			/* 锁定不可选样式 */
+			.option.locked {
+				background: #f2f2f2 !important;
+				color: #999 !important;
+				cursor: not-allowed !important;
+				border-color: #eee !important;
+			}
+
+			.btn-group {
+				display: flex;
+				justify-content: space-between;
+			}
+
+			.btn {
+				padding: 9px 18px;
+				border: none;
+				border-radius: 6px;
+				font-size: 14px;
+				cursor: pointer;
+				transition: 0.2s;
+			}
+
+			.prev-btn {
+				background: #eee;
+				color: #333;
+			}
+
+			.next-btn {
+				background: #555;
+				color: #fff;
+			}
+
+			.btn:disabled {
+				opacity: 0.4;
+				cursor: not-allowed;
+			}
+
+			.finish {
+				text-align: center;
+				font-size: 14px;
+				color: #444;
+				padding: 20px 0;
+			}
+
+			/* 第八题全屏漂浮文字样式 */
+			.float-text {
+				position: fixed;
+				color: #000;
+				font-weight: bold;
+				background: transparent;
+				padding: 4px 10px;
+				border: 2px solid #fff;
+				border-radius: 10px;
+				box-shadow: 0 0 6px #fff, 0 0 12px #fff;
+				animation: floatUpDown 0.7s infinite alternate ease-in-out;
+				pointer-events: none;
+				z-index: 9999;
+				white-space: nowrap;
+				text-shadow: none;
+				font-size: 12px;
+			}
+
+			@keyframes floatUpDown {
+				0% { transform: translateY(-6px); }
+				100% { transform: translateY(6px); }
+			}
+
+			/* 全屏打字样式 */
+			.fullscreen-love {
+				position: fixed;
+				top: 0;
+				left: 0;
+				width: 100vw;
+				height: 100vh;
+				background: #000;
+				z-index: 99999;
+				padding: 20px;
+				font-size: 14px;
+				color: #ff0000;
+				font-weight: bold;
+				line-height: 1.6;
+				white-space: pre-wrap;
+				overflow: hidden;
+			}
+			
+			/* 初始进入提示弹窗 */
+			.start-modal {
+				position: fixed;
+				top: 50%;
+				left: 50%;
+				transform: translate(-50%, -50%);
+				width: 240px;
+				background: #fff;
+				border: 2px solid #bbbbbb;
+				border-radius: 12px;
+				z-index: 999999;
+				display: flex;
+				flex-direction: column;
+				align-items: center;
+				justify-content: center;
+				padding: 20px 15px;
+				gap: 20px;
+			}
+			.start-text {
+				font-size: 14px;
+				color: #333;
+				line-height: 1.8;
+				text-align: center;
+			}
+			.start-btn {
+				background: #999999;
+				color: #fff;
+				border: none;
+				border-radius: 6px;
+				padding: 6px 20px;
+				font-size: 12px;
+				cursor: pointer;
+			}
+
+			/* 第16题弹窗样式 */
+			.q16-modal {
+				position: fixed;
+				top: 50%;
+				left: 50%;
+				transform: translate(-50%, -50%);
+				width: 200px;
+				height: 140px;
+				background: #fff;
+				border: 3px solid #ff0000;
+				border-radius: 12px;
+				z-index: 999999;
+				display: flex;
+				flex-direction: column;
+				align-items: center;
+				justify-content: center;
+				padding: 15px;
+				gap: 20px;
+			}
+			.q16-text {
+				font-size: 14px;
+				color: #000;
+				font-weight: bold;
+			}
+			.q16-btn {
+				background: #ff0000;
+				color: #fff;
+				border: none;
+				border-radius: 6px;
+				padding: 6px 18px;
+				font-size: 12px;
+				cursor: pointer;
+			}
+		</style>
+	</head>
+	<body>
+		<div class="box">
+			<div class="title">心理健康调查问卷</div>
+			<div class="progress" id="progress">第 1 题 / 共 30 题</div>
+			<div class="question" id="question"></div>
+			<div class="options" id="options"></div>
+			<div class="btn-group">
+				<button class="btn prev-btn" id="prevBtn">上一题</button>
+				<button class="btn next-btn" id="nextBtn">下一题</button>
+			</div>
+		</div>
+
+		<script>
+			const questions = [{
+					q: "1. 独处待在房间时，你总觉得暗处有视线在盯着你吗？",
+					opt: ["A. 经常会", "B. 偶尔察觉", "C. 几乎不会", "D. 完全没有"]
+				},
+				{
+					q: "2. 深夜关灯后，你会刻意回避看向镜子、玻璃反光物吗？",
+					opt: ["A.一定会避开", "B.偶尔不敢看", "C.无所谓", "D.很喜欢直视"]
+				},
+				{
+					q: "3. 你目前和伴侣的相处关系状态如何？",
+					opt: ["A.相处和睦，关系很好", "B.平淡疏离，不太要好", "C.长期冷战，互不沟通", "D.孤身一人，没有伴侣"]
+				},
+				{
+					q: "4. 安静的深夜里，你曾听见屋内出现细碎、不明的异响吗？",
+					opt: ["A.常常听到", "B.偶尔听见", "C.从没听过", "D.以为是错觉"]
+				},
+				{
+					q: "5. 走在空旷、昏暗的走廊或小巷，会下意识加快脚步吗？",
+					opt: ["A.极度紧张快步走", "B.会稍微加速", "C.正常行走", "D.毫无感觉"]
+				},
+				{
+					q: "6. 睡觉前，你会反复检查门窗、柜子是否完全关好锁死？",
+					opt: ["A.反复确认很多次", "B.简单检查一遍", "C.从不检查", "D.懒得在意"]
+				},
+				{
+					q: "7. 发呆放空时，耳边会出现模糊、听不清的低语声吗？",
+					opt: ["A.时常出现", "B.偶尔恍惚听到", "C.从未有过", "D.只当是幻听"]
+				},
+				{
+					q: "8. 无风吹动的情况下，你见过窗帘、衣物莫名轻轻晃动？",
+					opt: ["A.亲眼见过", "B.隐约注意过", "C.没有见过", "D.没留意过"]
+				},
+				{
+					q: "9. 你害怕半夜突然响起的手机提示音、门铃声这类异响吗？",
+					opt: ["A.极度害怕", "B.有点抵触心慌", "C.毫无波澜", "D.反而习惯"]
+				},
+				{
+					q: "10. 路过空无一人的封闭房间，会下意识往里张望打量吗？",
+					opt: ["A.不敢看却忍不住瞟", "B.会简单看一眼", "C.直接路过", "D.刻意绕开"]
+				},
+				{
+					q: "11. 你是否长期隐瞒自己的作息，不想被他人完全摸清？",
+					opt: ["A.刻意隐藏所有作息", "B.会隐瞒一部分", "C.完全公开", "D.无所谓别人知道"]
+				},
+				{
+					q: "12. 雾气朦胧的镜子前，你不敢长时间注视自己的倒影？",
+					opt: ["A.完全不敢", "B.看久会心慌", "C.正常对视", "D.毫无顾忌"]
+				},
+				{
+					q: "13. 走夜路时，你总下意识不敢回头，害怕身后有东西？",
+					opt: ["A.全程不敢回头", "B.偶尔会顾虑", "C.随意回头", "D.从不害怕"]
+				},
+				{
+					q: "14. 空无一人的家里，你曾听到过微弱脚步声或呼吸声吗？",
+					opt: ["A.清晰听到过", "B.模糊感知过", "C.从未听到", "D.自我安慰是幻觉"]
+				},
+				{
+					q: "15. 极度安静的环境里，你会产生莫名的心慌与压抑感？",
+					opt: ["A.安静越久越恐惧", "B.偶尔会不适", "C.喜欢安静", "D.没有任何感觉"]
+				},
+				{
+					q: "16. 你会频繁怀疑，有人在悄悄翻看你的社交动态与日常？",
+					opt: ["A.一直心存戒备", "B.偶尔会担心", "C.从不怀疑", "D.无所谓被看见"]
+				},
+				{
+					q: "17. 深夜独自待着时，你是否会隐隐希望身边有陌生存在陪着你？",
+					opt: ["A.十分渴望", "B.偶尔会想", "C.完全不需要", "D.十分抗拒"]
+				},
+				{
+					q: "18. 你做过情节相似、场景固定、反复循环的重复噩梦？",
+					opt: ["A.经常做同类噩梦", "B.有过几次", "C.很少做梦", "D.从不做噩梦"]
+				},
+				{
+					q: "19. 你曾遇到过时间错乱、钟表异常、记忆断层的奇怪时刻？",
+					opt: ["A.多次遇到", "B.偶然发生", "C.从未有过", "D.记错而已"]
+				},
+				{
+					q: "20. 独自在家时，你会拒绝一切深夜陌生的敲门与求助吗？",
+					opt: ["A.绝对不会回应", "B.谨慎试探", "C.会正常回应", "D.主动开门查看"]
+				},
+				{
+					q: "21. 你会刻意假装忙碌，刻意不回复别人的消息来独处吗？",
+					opt: ["A.经常这样", "B.偶尔会", "C.几乎不会", "D.从来不会"]
+				},
+				{
+					q: "22. 空白墙面、阴暗角落，会让你产生莫名的压抑与恐惧？",
+					opt: ["A.看见就不舒服", "B.偶尔在意", "C.完全无感", "D.习惯角落"]
+				},
+				{
+					q: "23. 短暂失联时，你会害怕有人刻意四处寻找你的踪迹？",
+					opt: ["A.十分恐惧", "B.有点担心", "C.完全不怕", "D.期待被找到"]
+				},
+				{
+					q: "24. 醒来的一瞬间，你时常分不清现实与梦境的边界？",
+					opt: ["A.经常混淆", "B.偶尔恍惚", "C.意识很清醒", "D.从未混乱"]
+				},
+				{
+					q: "25. 你相信，有看不见的未知事物，一直徘徊在我们身边？",
+					opt: ["A.完全相信", "B.半信半疑", "C.绝不相信", "D.刻意回避思考"]
+				},
+				{
+					q: "26. 你习惯手机不离手，绝不随意把设备单独放置角落？",
+					opt: ["A.时刻随身携带", "B.尽量不放独处角落", "C.随意摆放", "D.经常乱丢"]
+				},
+				{
+					q: "27. 密闭黑暗的狭小空间，会让你产生强烈的窒息感吗？",
+					opt: ["A.极度压抑难受", "B.稍有不适", "C.可以适应", "D.完全喜欢"]
+				},
+				{
+					q: "28. 你是否会反感他人过度打探你的生活细节与小习惯？",
+					opt: ["A.极度抵触警惕", "B.有点反感", "C.可以接受", "D.乐意分享"]
+				},
+				{
+					q: "29. 明明没有任何异常，却总会莫名觉得当下氛围不对劲？",
+					opt: ["A.经常莫名违和", "B.偶尔敏感多想", "C.神经大条无感", "D.从不胡思乱想"]
+				},
+				{
+					q: "30. 如果有陌生人默默记下了你所有喜好、习惯与小动作",
+					opt: ["A.极致恐惧抵触", "B.细思极恐不安", "C.有点暖心", "D.十分期待"]
+				}
+			];
+
+			let current = 0;
+			let answers = Array(questions.length).fill(null);
+			const total = questions.length;
+			const prevBtn = document.getElementById('prevBtn');
+			const nextBtn = document.getElementById('nextBtn');
+			const optionsEl = document.getElementById('options');
+			const boxEl = document.querySelector('.box');
+
+			let fromQ4ToQ5 = false;
+			let q5Timer = null;
+
+			// 初始进入提示弹窗
+			function openStartModal(){
+				const tipTexts = [
+					"欢迎参与本次心理调查问卷",
+					"请根据自身真实感受选择答案",
+					"题目含特殊互动效果，请耐心作答",
+					"一切准备就绪，开始答题"
+				];
+				let idx = 0;
+				const modal = document.createElement("div");
+				modal.className = "start-modal";
+				const textDom = document.createElement("div");
+				textDom.className = "start-text";
+				textDom.innerText = tipTexts[idx];
+				const btnDom = document.createElement("button");
+				btnDom.className = "start-btn";
+				btnDom.innerText = "继续";
+				btnDom.onclick = function(){
+					idx++;
+					if(idx < tipTexts.length){
+						textDom.innerText = tipTexts[idx];
+						if(idx === tipTexts.length - 1){
+							btnDom.innerText = "进入";
+						}
+					}else{
+						modal.remove();
+						// 显示问卷并渲染第一题
+						boxEl.style.display = 'block';
+						renderQuestion();
+					}
+				};
+				modal.appendChild(textDom);
+				modal.appendChild(btnDom);
+				document.body.appendChild(modal);
+			}
+
+			// 第五题特效
+			function startQ5Effect() {
+				if(q5Timer) clearTimeout(q5Timer);
+				q5Timer = setTimeout(() => {
+					if(current !== 4) return;
+					const opts = document.querySelectorAll('.option');
+					const originalTexts = Array.from(opts).map(o => o.innerText);
+					opts.forEach(o => o.style.pointerEvents = "none");
+					prevBtn.disabled = true;
+					nextBtn.disabled = true;
+					setTimeout(() => opts[0].innerText = "亲爱的等我好吗", 0);
+					setTimeout(() => opts[1].innerText = "亲爱的等我好吗", 300);
+					setTimeout(() => opts[2].innerText = "亲爱的等我好吗", 600);
+					setTimeout(() => opts[3].innerText = "亲爱的等我好吗", 900);
+					setTimeout(() => {
+						if(current !== 4) return;
+						opts.forEach((o, i) => o.innerText = originalTexts[i]);
+						opts.forEach(o => o.style.pointerEvents = "auto");
+						prevBtn.disabled = current === 0;
+						nextBtn.disabled = false;
+					}, 5000);
+				}, 1500);
+			}
+
+			// 乱码库
+			const glitchChars = ["@#￥%", "……&*", "!@#$", "%^&*", "#￥%……", "&*^^", "@*&%", "#￥……&"];
+
+			// 第八题特效
+			function startQ8Effect(selectedIndex) {
+				document.body.style.background = "#ff0000";
+				boxEl.style.opacity = "0";
+				prevBtn.disabled = true;
+				nextBtn.disabled = true;
+				document.querySelectorAll('.option').forEach(o => o.style.pointerEvents = "none");
+				let textList = selectedIndex < 2 ? ["亲爱的你注意到我了^^", "我好开心"] : ["亲爱的你是故意的吗^^", "我好难过"];
+				const created = [];
+				let timer = setInterval(() => {
+					for (let i = 0; i < 10; i++) {
+						const el = document.createElement('div');
+						el.className = "float-text";
+						el.innerText = Math.random() > 0.5 ? textList[Math.floor(Math.random() * textList.length)] :
+							glitchChars[Math.floor(Math.random() * glitchChars.length)];
+						el.style.left = Math.random() * 96 + 2 + "vw";
+						el.style.top = Math.random() * 96 + 2 + "vh";
+						el.style.fontSize = 12 + Math.random() * 16 + "px";
+						el.style.animationDelay = Math.random() * 0.5 + "s";
+						document.body.appendChild(el);
+						created.push(el);
+					}
+				}, 200);
+				setTimeout(() => {
+					clearInterval(timer);
+					created.forEach(e => e.remove());
+					boxEl.style.opacity = "1";
+					document.body.style.background = "#f7f8fa";
+					prevBtn.disabled = current === 0;
+					nextBtn.disabled = false;
+					document.querySelectorAll('.option').forEach(o => o.style.pointerEvents = "auto");
+					current++;
+					renderQuestion();
+				}, 5000);
+			}
+
+			// 恐怖打字
+			function triggerTerror(text, nextQ) {
+				const mask = document.createElement('div');
+				mask.className = 'terror-mask';
+				const t = document.createElement('div');
+				t.className = 'terror-text';
+				mask.appendChild(t);
+				document.body.appendChild(mask);
+				let idx = 0;
+
+				function ty() {
+					if (idx < text.length) {
+						t.innerText += text[idx];
+						idx++;
+						setTimeout(ty, 80);
+					} else {
+						setTimeout(() => {
+							let gt = setInterval(() => {
+								t.innerText = t.innerText.split('').sort(() => Math.random() - 0.5).join('');
+							}, 60);
+							setTimeout(() => {
+								clearInterval(gt);
+								mask.remove();
+								current = nextQ;
+								renderQuestion();
+							}, 600);
+						}, 1000);
+					}
+				}
+				ty();
+			}
+
+			// 全屏打字 我爱你
+			function startLoveTyping() {
+				boxEl.style.opacity = "0";
+				prevBtn.disabled = true;
+				nextBtn.disabled = true;
+				const el = document.createElement("div");
+				el.className = "fullscreen-love";
+				document.body.appendChild(el);
+				const str = "我爱你";
+				let i = 0;
+				let max = 1500;
+				let timer = setInterval(() => {
+					el.innerText += str[i % 3];
+					i++;
+					if (el.innerText.length >= max) {
+						clearInterval(timer);
+						setTimeout(() => {
+							el.remove();
+							boxEl.style.opacity = "1";
+							prevBtn.disabled = current === 0;
+							nextBtn.disabled = false;
+							current++;
+							renderQuestion();
+						}, 400);
+					}
+				}, 10);
+			}
+			
+			// 第16题弹窗
+			function openQ16Modal() {
+				const texts = ["^^", "亲爱的", "我看见你了", "......"];
+				let index = 0;
+				const modal = document.createElement("div");
+				modal.className = "q16-modal";
+				const textEl = document.createElement("div");
+				textEl.className = "q16-text";
+				textEl.innerText = texts[index];
+				const btn = document.createElement("button");
+				btn.className = "q16-btn";
+				btn.innerText = "继续";
+				btn.onclick = () => {
+					index++;
+					if(index < texts.length){
+						textEl.innerText = texts[index];
+						if(index === texts.length - 1){
+							btn.innerText = "关闭";
+						}
+					}else{
+						modal.remove();
+					}
+				};
+				modal.append(textEl, btn);
+				document.body.appendChild(modal);
+			}
+
+			function renderQuestion() {
+				if(q5Timer){ clearTimeout(q5Timer); q5Timer = null; }
+				const q = questions[current];
+				document.getElementById("progress").innerText = `第 ${current+1} 题 / 共 ${total} 题`;
+				document.getElementById("question").innerText = q.q;
+				optionsEl.innerHTML = "";
+				boxEl.style.opacity = "1";
+
+				q.opt.forEach((item, idx) => {
+					const div = document.createElement("div");
+					div.className = "option";
+					if (answers[current] === idx) div.classList.add("selected");
+					div.innerText = item;
+					div.onclick = () => {
+						answers[current] = idx;
+
+						// 第3题
+						if (current === 2) {
+							idx < 3 ? triggerTerror("真让人难过^^", current + 1) : triggerTerror("真让人高兴^^", current + 1);
+							return;
+						}
+
+						// 第8题
+						if (current === 7) {
+							startQ8Effect(idx);
+							return;
+						}
+
+						// 第16题
+						if(current === 15){
+							document.querySelectorAll('.option').forEach(opt => opt.classList.remove('selected'));
+							div.classList.add('selected');
+							setTimeout(() => { openQ16Modal(); }, 100);
+							return;
+						}
+						
+						// 第17题
+						if (current === 16) {
+							if (idx === 0 || idx === 1) { startLoveTyping(); }
+							else if (idx === 2) { div.classList.add("locked"); div.innerText = "不许选^"; div.onclick = null; }
+							else if (idx === 3) { div.classList.add("locked"); div.innerText = "不许选^"; div.onclick = null; }
+							return;
+						}
+
+						// 第20题
+						if(current === 19){
+							document.querySelectorAll('.option').forEach(opt => opt.classList.remove('selected'));
+							div.classList.add('selected');
+							if(idx === 0){ div.innerText = "亲爱的别拒绝我TT"; div.classList.add("locked"); div.onclick = null; }
+							else if(idx === 1){ div.innerText = "真让人寒心呢^^"; div.classList.add("locked"); div.onclick = null; }
+							else if(idx === 2){ div.innerText = "不许给别人开门哦"; div.classList.add("locked"); div.onclick = null; }
+							else if(idx === 3){ div.innerText = "我爱你"; }
+							return;
+						}
+
+						renderQuestion();
+					};
+					optionsEl.appendChild(div);
+				});
+
+				if (current === 4 && fromQ4ToQ5) { startQ5Effect(); fromQ4ToQ5 = false; }
+				prevBtn.disabled = current === 0;
+				nextBtn.innerText = current === total - 1 ? "提交问卷" : "下一题";
+			}
+
+			prevBtn.onclick = () => {
+				if (current > 0) { current--; renderQuestion(); }
+			};
+			nextBtn.onclick = () => {
+				if (current === 3) fromQ4ToQ5 = true;
+				if (current < total - 1) { current++; renderQuestion(); }
+				else { boxEl.innerHTML = `<div class="finish">问卷作答完毕<br><br>你所有的答案，都已经被好好收藏了。</div>`; }
+			};
+
+			// 初始化：只弹弹窗，不显示问卷
+			openStartModal();
+		</script>
+	</body>
+</html>
