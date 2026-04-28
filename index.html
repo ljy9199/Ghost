@@ -6,11 +6,11 @@
 		<title>心理调查问卷</title>
 		<style>
 			* {
-				margin: 0;
-				padding: 0;
-				box-sizing: border-box;
-				font-family: sans-serif;
-				font-size: 18px;
+			    margin: 0;
+			    padding: 0;
+			    box-sizing: border-box; /* 这行很重要！ */
+			    font-family: sans-serif;
+			    font-size: 18px;
 			}
 
 			html,
@@ -290,7 +290,6 @@
 				position: relative;
 				z-index: 10;
 				overflow: hidden;
-				/* 关键：和 .box 一样的 flex 布局 */
 				flex-direction: column;
 			}
 
@@ -313,7 +312,6 @@
 				padding-bottom: 10px;
 			}
 
-			/* 让每一篇日记都占满整个 diary-wrap */
 			.diary-page1,
 			.diary-page2,
 			.diary-page3 {
@@ -323,25 +321,35 @@
 				flex-direction: column;
 			}
 
-			/* 重点：第四页「又只有我自己了」单独居中自适应 */
+			/* 修复：第四页完全垂直+水平居中，不贴顶部、自适应 */
+			/* 修复：第四页完全垂直+水平居中，不贴顶部、自适应 */
 			.diary-page4 {
-				display: none;
-				width: 100%;
-				height: 100%;
-				display: flex;
-				flex-direction: column;
-				justify-content: center;
-				align-items: center;
-				text-align: center;
-				padding: 20px;
+			    display: none;
+			    width: 100%;
+			    height: 100%;
+			    /* 全局垂直水平居中 */
+			    display: flex;
+			    flex-direction: column;
+			    justify-content: center;
+			    align-items: center;
+			    text-align: center;
+			    padding: 20px 30px;
+			    box-sizing: border-box;
+			    position: absolute;
+			    top: 0;
+			    left: 0;
 			}
-
+			
 			.diary-page4 .diary-content {
-				width: 100%;
-				height: auto;
-				margin: 0;
-				font-size: clamp(14px, 3.5vw, 16px);
-				line-height: 2.2;
+			    width: 100%;
+			    height: auto;
+			    margin: 0;
+			    font-size: clamp(14px, 3.5vw, 16px);
+			    line-height: 2.2;
+			    display: flex;
+			    flex-direction: column;
+			    justify-content: center;
+			    align-items: center;
 			}
 
 			.page-next,
@@ -466,12 +474,13 @@
 			}
 
 			.submit-modal-inner {
-				background: #fff;
-				padding: 35px 30px;
-				border-radius: 12px;
-				text-align: center;
-				width: min(90vw, 320px);
-				border: 2px solid #ccc;
+			    background: #fff;
+			    padding: 35px 30px;
+			    border-radius: 12px;
+			    text-align: center;
+			    width: min(90vw, 320px);
+			    border: 2px solid #ccc;
+			    box-sizing: border-box;
 			}
 
 			.submit-btn {
@@ -491,7 +500,6 @@
 				font-size: clamp(10px, 2.5vw, 12px);
 			}
 
-			/* 修复：黑色惩罚全屏 */
 			.black-screen {
 				position: fixed;
 				top: 0;
@@ -575,10 +583,10 @@
 			</div>
 		
 			<div class="diary-page4" id="diaryPage4">
-				<div class="diary-content" style="text-align:center;">
+				<div class="diary-content">
 					<div style="color:#999;">又只有我自己了……</div>
 					<div style="color:#666;margin:15px 0;">你愿意成为我的爱人，永远陪着我吗？</div>
-					<button class="start-btn" id="agreeBtn" style="margin-top:20px;">我愿意</button>
+					<button class="start-btn" id="agreeBtn">我愿意</button>
 				</div>
 			</div>
 		</div>
@@ -813,7 +821,6 @@
 
 			function openStartModal() {
 				clearAllEffects();
-				// 初始化弹窗 隐藏问卷+按钮
 				mainBox.style.display = "none";
 
 				const tipTexts = [
@@ -843,7 +850,6 @@
 						}
 					} else {
 						modal.remove();
-						// 进入后才显示问卷
 						mainBox.style.display = "flex";
 						renderQuestion();
 					}
@@ -880,7 +886,6 @@
 			const glitchChars = ["@#￥%", "……&*", "!@#$", "%^&*", "#￥%……", "&*^^", "@*&%", "#￥……&"];
 
 			function startQ8Effect(selectedIndex) {
-				// 红底全屏（无过渡，强制设置）
 				document.documentElement.style.setProperty('background', '#d80000', 'important');
 				document.body.style.setProperty('background', '#d80000', 'important');
 				boxEl.style.opacity = "0";
@@ -913,24 +918,15 @@
 					}
 				}, 200);
 
-				// 倒计时结束：文字、红背景 同时瞬间消失 → 再跳转第9题
 				setTimeout(() => {
 					clearInterval(timer);
-
-					// 1. 瞬间清除所有漂浮文字
 					created.forEach(e => e.remove());
-
-					// 2. 瞬间恢复背景色（无过渡，强制覆盖）
 					document.documentElement.style.setProperty('background', '#f7f8fa', 'important');
 					document.body.style.setProperty('background', '#f7f8fa', 'important');
-
-					// 3. 恢复界面可操作
 					boxEl.style.opacity = "1";
 					prevBtn.disabled = current === 0;
 					nextBtn.disabled = false;
 					document.querySelectorAll('.option').forEach(o => o.style.pointerEvents = "auto");
-
-					// 4. 跳第9题
 					current++;
 					renderQuestion();
 				}, 5000);
@@ -1020,7 +1016,6 @@
 				document.body.appendChild(modal);
 			}
 
-			// 修复：黑色全屏惩罚界面
 			function blackPunish() {
 				const screen = document.createElement("div");
 				screen.className = "black-screen";
@@ -1028,7 +1023,6 @@
 				document.body.appendChild(screen);
 				setTimeout(() => {
 					screen.innerText = "再给你一次机会";
-					// 缩小版白光发光，更内敛
 					screen.style.color = "#ffffff";
 					screen.style.textShadow = "0 0 2px #fff, 0 0 5px #fff, 0 0 8px #ddd";
 				}, 2000);
@@ -1045,20 +1039,32 @@
 				const inner = document.createElement("div");
 				inner.className = "submit-modal-inner";
 				inner.innerHTML = `
-			        <!-- 只给标题加 margin-bottom 调整和输入框的间距，不改其他任何东西 -->
-			        <div style="margin-bottom: 10px;">请输入指定文字解锁查看</div>
-			        <div class="input-wrap">
-			            <input type="text" id="loveInput" placeholder="请输入：我爱你" style="font-size: 14px;">
-			            <button class="submit-btn" id="unlockBtn">继续</button>
-			        </div>
-			    `;
+				<div style="margin-bottom: 10px; font-size: 16px; text-align: center;">请输入指定文字解锁查看</div>
+				<div style="display: flex; flex-direction: column; gap: 16px; align-items: center; width: 100%;">
+					<input 
+						type="text" 
+						id="loveInput" 
+						placeholder="请输入：我爱你" 
+						style="
+							font-size: 16px;
+							padding: 10px 14px;
+							border: 1px solid #ccc;
+							border-radius: 8px;
+							width: 100%;
+							max-width: 280px;
+							box-sizing: border-box;
+						"
+					>
+					<button class="submit-btn" id="unlockBtn">继续</button>
+				</div>
+				`;
+				
 				modal.appendChild(inner);
 				document.body.appendChild(modal);
 
 				const input = document.getElementById("loveInput");
 				const unlockBtn = document.getElementById("unlockBtn");
 
-				// 初始化状态（完全保留你原来的逻辑，不碰按钮样式）
 				unlockBtn.disabled = false;
 				unlockBtn.classList.remove("locked");
 				unlockBtn.style.background = "";
@@ -1066,7 +1072,6 @@
 
 				input.addEventListener('input', function() {
 					const val = input.value.trim();
-
 					if (val === "我爱你") {
 						unlockBtn.disabled = false;
 						unlockBtn.classList.remove("locked");
@@ -1156,12 +1161,10 @@
 				let textArr = ["我爱你", "好喜欢你", "想和你一直在一起"];
 				let textIndex = 0;
 
-				// 逐句打字播放红字
 				function showText() {
 					if (textIndex < textArr.length) {
 						textDom.innerText = textArr[textIndex];
 						textIndex++;
-						// 最后一句播完 1秒后显示确认按钮
 						if (textIndex === textArr.length) {
 							setTimeout(() => {
 								confirmBtn.style.display = "block";
@@ -1172,7 +1175,6 @@
 				}
 				showText();
 
-				// 确认按钮逻辑不变
 				confirmBtn.onclick = function() {
 					blackFull.remove();
 					const endModal = document.createElement("div");
