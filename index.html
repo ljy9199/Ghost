@@ -10,7 +10,7 @@
 				padding: 0;
 				box-sizing: border-box;
 				font-family: sans-serif;
-				font-size: 14px;
+				font-size: 16px;
 			}
 
 			html,
@@ -22,8 +22,7 @@
 				display: flex;
 				justify-content: center;
 				align-items: center;
-				padding: 0;
-				transition: background 1.2s ease;
+				padding: 10px;
 			}
 
 			/* 恐怖黑屏遮罩 */
@@ -42,15 +41,18 @@
 
 			.terror-text {
 				color: #d80000;
-				font-size: 16px;
+				font-size: clamp(14px, 3vw, 18px);
 				letter-spacing: 6px;
 				white-space: nowrap;
 			}
 
+			/* 核心自适应盒子 */
 			.box {
 				background: white;
 				width: 100%;
-				max-width: 480px;
+				height: 100%;
+				max-width: 600px;
+				max-height: 90vh;
 				padding: 25px 20px;
 				border-radius: 12px;
 				box-shadow: 0 2px 15px rgba(0, 0, 0, 0.05);
@@ -58,47 +60,61 @@
 				z-index: 10;
 				transition: opacity 0.3s;
 				display: none;
-				margin: 10px;
+				/* 初始隐藏问卷 */
+				flex-direction: column;
+				overflow: hidden;
 			}
 
 			.title {
-				font-size: 16px;
-				margin-bottom: 20px;
+				font-size: clamp(16px, 4vw, 18px);
+				margin-bottom: 15px;
 				text-align: center;
 				color: #333;
 				font-weight: bold;
+				flex-shrink: 0;
 			}
 
 			.progress {
 				text-align: center;
-				font-size: 12px;
+				font-size: clamp(12px, 2.5vw, 13px);
 				color: #666;
 				margin-bottom: 15px;
+				flex-shrink: 0;
 			}
 
 			.question {
-				font-size: 14px;
+				font-size: clamp(14px, 3vw, 15px);
 				line-height: 1.6;
 				color: #222;
 				min-height: 35px;
+				margin-bottom: 15px;
+				flex-shrink: 0;
 			}
 
 			.options {
 				display: flex;
 				flex-direction: column;
-				margin-bottom: 15px;
 				gap: 12px;
+				flex: 1;
+				overflow-y: auto;
+				padding-right: 5px;
 			}
 
 			.option {
-				padding: 12px 14px;
+				padding: 14px;
 				border: 1px solid #ddd;
 				border-radius: 8px;
 				cursor: pointer;
-				font-size: 14px;
+				font-size: clamp(13px, 2.8vw, 14px);
 				background: #fff;
 				transition: all 0.2s;
 				line-height: 1.4;
+				flex-shrink: 0;
+				min-height: 48px;
+				display: flex;
+				align-items: center;
+				position: relative;
+				z-index: 2;
 			}
 
 			.option.selected {
@@ -116,20 +132,28 @@
 			.btn-group {
 				display: flex;
 				justify-content: space-between;
+				margin-top: 15px;
+				flex-shrink: 0;
 			}
 
 			.btn {
-				padding: 9px 18px;
+				padding: 12px 20px;
 				border: none;
 				border-radius: 6px;
-				font-size: 14px;
+				font-size: clamp(12px, 2.5vw, 14px);
 				cursor: pointer;
 				transition: 0.2s;
+				flex: 1;
+				max-width: 120px;
+				text-align: center;
+				position: relative;
+				z-index: 2;
 			}
 
 			.prev-btn {
 				background: #eee;
 				color: #333;
+				margin-right: 10px;
 			}
 
 			.next-btn {
@@ -142,65 +166,55 @@
 				cursor: not-allowed;
 			}
 
-			.finish {
-				text-align: center;
-				font-size: 16px;
-				color: #444;
-				padding: 30px 20px;
-				line-height: 2.2;
-			}
-
-			/* 第八题全屏漂浮文字样式 */
+			/* 第八题漂浮文字 */
 			.float-text {
 				position: fixed;
 				color: #000;
 				font-weight: bold;
 				background: transparent;
 				padding: 4px 10px;
-				border: 2px solid #fff;
 				border-radius: 10px;
-				box-shadow: 0 0 6px #fff, 0 0 12px #fff;
-				animation: floatUpDown 0.7s infinite alternate ease-in-out;
 				pointer-events: none;
 				z-index: 9999;
 				white-space: nowrap;
 				text-shadow: none;
-				font-size: 12px;
+				font-size: clamp(10px, 2vw, 12px);
 			}
 
-			@keyframes floatUpDown {
-				0% {
-					transform: translateY(-6px);
-				}
-
-				100% {
-					transform: translateY(6px);
-				}
-			}
-
-			/* 第25题 窥视小字 */
+			/* 第25题 全覆盖层级 */
 			.peep-text {
 				position: fixed;
-				color: #ff0000;
-				opacity: 0.15;
-				font-size: 13px;
+				color: #ff2b2b;
+				opacity: 0.18;
+				font-size: clamp(11px, 2.2vw, 13px);
 				pointer-events: none;
-				z-index: 5;
+				z-index: 99;
 				white-space: nowrap;
 				animation: slowFade 4s infinite alternate;
 			}
 
+			.q25-gray-mask {
+				position: fixed;
+				top: 0;
+				left: 0;
+				width: 100vw;
+				height: 100vh;
+				background: rgba(90, 90, 90, 0.25);
+				pointer-events: none;
+				z-index: 98;
+			}
+
 			@keyframes slowFade {
 				0% {
-					opacity: 0.1;
+					opacity: 0.12;
 				}
 
 				100% {
-					opacity: 0.25;
+					opacity: 0.22;
 				}
 			}
 
-			/* 全屏打字样式 */
+			/* 全屏打字 */
 			.fullscreen-love {
 				position: fixed;
 				top: 0;
@@ -210,7 +224,7 @@
 				background: #000;
 				z-index: 99999;
 				padding: 20px;
-				font-size: 14px;
+				font-size: clamp(12px, 3vw, 14px);
 				color: #ff0000;
 				font-weight: bold;
 				line-height: 1.6;
@@ -218,13 +232,13 @@
 				overflow: hidden;
 			}
 
-			/* 初始进入提示弹窗 */
+			/* 初始提示框 */
 			.start-modal {
 				position: fixed;
 				top: 50%;
 				left: 50%;
 				transform: translate(-50%, -50%);
-				width: 240px;
+				width: min(90vw, 280px);
 				background: #fff;
 				border: 2px solid #bbbbbb;
 				border-radius: 12px;
@@ -238,14 +252,14 @@
 			}
 
 			.start-text {
-				font-size: 14px;
+				font-size: clamp(14px, 2.8vw, 16px);
 				color: #333;
 				line-height: 1.8;
 				text-align: center;
 			}
-			/* 新增 极小亮红色提示小字 */
-			.tiny-red-tip{
-				font-size: 9px;
+
+			.tiny-red-tip {
+				font-size: clamp(10px, 2vw, 9px);
 				color: #ff2222;
 				text-align: center;
 				line-height: 1.4;
@@ -258,183 +272,94 @@
 				border: none;
 				border-radius: 6px;
 				padding: 6px 20px;
-				font-size: 12px;
+				font-size: clamp(12px, 2.5vw, 14px);
 				cursor: pointer;
-				margin-top:8px;
+				margin-top: 8px;
 			}
 
-			/* 第16题弹窗样式 */
-			.q16-modal {
-				position: fixed;
-				top: 50%;
-				left: 50%;
-				transform: translate(-50%, -50%);
-				width: 200px;
-				height: 140px;
-				background: #fff;
-				border: 3px solid #ff0000;
-				border-radius: 12px;
-				z-index: 999999;
-				display: flex;
-				flex-direction: column;
-				align-items: center;
-				justify-content: center;
-				padding: 15px;
-				gap: 20px;
-			}
-
-			.q16-text {
-				font-size: 14px;
-				color: #000;
-				font-weight: bold;
-			}
-
-			.q16-btn {
-				background: #ff0000;
-				color: #fff;
-				border: none;
-				border-radius: 6px;
-				padding: 6px 18px;
-				font-size: 12px;
-				cursor: pointer;
-			}
-
-			/* 提交后弹窗样式 */
-			.submit-modal {
-				position: fixed;
-				top: 50%;
-				left: 50%;
-				transform: translate(-50%, -50%);
-				background: #fff;
-				padding: 35px 30px;
-				border-radius: 12px;
-				z-index: 999999;
-				text-align: center;
-				min-width: 320px;
-				border: 2px solid #ccc;
-			}
-
-			.submit-btn {
-				padding: 8px 25px;
-				border: none;
-				background: #333;
-				color: #fff;
-				border-radius: 6px;
-				cursor: pointer;
-				margin: 15px 0 8px;
-				transition: all 0.2s;
-			}
-
-			.submit-btn.locked {
-				background: #f2f2f2 !important;
-				color: #999 !important;
-				cursor: not-allowed !important;
-				border-color: #eee !important;
-			}
-
-			.refuse-tip {
-				color: red;
-				font-size: 13px;
-			}
-
-			.input-wrap {
-				margin-top: 20px;
-			}
-
-			.input-wrap input {
-				width: 100%;
-				padding: 10px;
-				border: 1px solid #ddd;
-				border-radius: 6px;
-				margin-bottom: 15px;
-			}
-
-			/* 黑屏惩罚页 */
-			.black-screen {
-				position: fixed;
-				top: 0;
-				left: 0;
-				width: 100vw;
-				height: 100vh;
-				background: #000;
-				z-index: 9999999;
-				display: flex;
-				justify-content: center;
-				align-items: center;
-				flex-direction: column;
-			}
-
-			.threat-red {
-				color: #ff0000;
-				font-size: 20px;
-				font-weight: bold;
-			}
-
-			.second-chance {
-				color: #fff;
-				font-size: 22px;
-				font-weight: bold;
-				text-shadow: 0 0 8px #fff;
-			}
-
-			/* 日记主容器：固定高度，不会被内容撑高 */
 			.diary-wrap {
 				display: none;
 				width: 100%;
-				max-width: 480px;
-				height: 450px;
-				/* 固定高度，和问卷卡片保持一样的高度 */
+				height: 100%;
+				max-width: 600px;
+				max-height: 90vh;
 				padding: 25px 20px;
 				border-radius: 12px;
 				background: #fff;
-				box-shadow: 2px 15px rgba(0, 0, 0, 0.05);
+				box-shadow: 0 2px 15px rgba(0, 0, 0, 0.05);
 				position: relative;
-				margin: 10px;
+				z-index: 10;
+				overflow: hidden;
+				/* 关键：和 .box 一样的 flex 布局 */
+				flex-direction: column;
 			}
 
 			.diary-date {
 				position: absolute;
 				top: 15px;
 				left: 20px;
-				font-size: 12px;
+				font-size: clamp(11px, 2.5vw, 12px);
 				color: #666;
 			}
 
 			.diary-content {
 				margin-top: 25px;
 				line-height: 2;
-				font-size: 13px;
+				font-size: clamp(12px, 2.7vw, 13px);
 				color: #222;
 				letter-spacing: 1px;
-				/* 关键：限制内容区域高度，避免内容把箭头挤下去 */
-				height: 320px;
+				height: calc(100% - 80px);
 				overflow-y: auto;
-				/* 内容太多时可以滚动，不会溢出容器 */
+				padding-bottom: 10px;
 			}
 
-			/* 翻页按钮：固定在容器最底部，不会随内容变化 */
-			.page-next {
+			/* 让每一篇日记都占满整个 diary-wrap */
+			.diary-page1,
+			.diary-page2,
+			.diary-page3 {
+				width: 100%;
+				height: 100%;
+				display: flex;
+				flex-direction: column;
+			}
+
+			/* 重点：第四页「又只有我自己了」单独居中自适应 */
+			.diary-page4 {
+				display: none;
+				width: 100%;
+				height: 100%;
+				display: flex;
+				flex-direction: column;
+				justify-content: center;
+				align-items: center;
+				text-align: center;
+				padding: 20px;
+			}
+
+			.diary-page4 .diary-content {
+				width: 100%;
+				height: auto;
+				margin: 0;
+				font-size: clamp(14px, 3.5vw, 16px);
+				line-height: 2.2;
+			}
+
+			.page-next,
+			.page-prev {
 				position: absolute;
-				right: 20px;
-				bottom: 15px;
-				/* 贴在容器最底部 */
-				font-size: 20px;
+				font-size: clamp(18px, 4vw, 20px);
 				cursor: pointer;
 				color: #333;
 				z-index: 1;
-				/* 保证箭头在内容上层 */
+				bottom: 15px;
 			}
 
 			.page-prev {
-				position: absolute;
 				left: 20px;
-				bottom: 15px;
-				/* 贴在容器最底部 */
-				font-size: 20px;
-				cursor: pointer;
-				color: #333;
-				z-index: 1;
-				/* 保证箭头在内容上层 */
+			}
+
+			.page-next {
+				right: 20px;
 			}
 
 			.diary-page2,
@@ -443,7 +368,6 @@
 				display: none;
 			}
 
-			/* 最终黑屏文字层 */
 			.black-full-text {
 				position: fixed;
 				top: 0;
@@ -457,7 +381,7 @@
 				justify-content: center;
 				align-items: center;
 				color: #ff0000;
-				font-size: 24px;
+				font-size: clamp(20px, 5vw, 24px);
 				font-weight: bold;
 				gap: 30px;
 			}
@@ -469,7 +393,7 @@
 				padding: 8px 22px;
 				border-radius: 6px;
 				cursor: pointer;
-				font-size: 12px;
+				font-size: clamp(11px, 2.5vw, 12px);
 			}
 
 			.end-modal {
@@ -482,8 +406,109 @@
 				border-radius: 12px;
 				z-index: 99999999;
 				text-align: center;
-				min-width: 320px;
+				width: min(90vw, 320px);
 				border: 2px solid #ccc;
+			}
+
+			.q16-modal,
+			.submit-modal,
+			.black-screen {
+				width: 100vw;
+				height: 100vh;
+			}
+
+			.q16-modal {
+				position: fixed;
+				top: 50%;
+				left: 50%;
+				transform: translate(-50%, -50%);
+				width: min(90vw, 200px);
+				height: auto;
+				background: #fff;
+				border: 3px solid #ff0000;
+				border-radius: 12px;
+				z-index: 999999;
+				display: flex;
+				flex-direction: column;
+				align-items: center;
+				justify-content: center;
+				padding: 15px;
+				gap: 20px;
+			}
+
+			.q16-text {
+				font-size: clamp(12px, 3vw, 14px);
+				color: #000;
+				font-weight: bold;
+			}
+
+			.q16-btn {
+				background: #ff0000;
+				color: #fff;
+				border: none;
+				border-radius: 6px;
+				padding: 6px 18px;
+				font-size: clamp(11px, 2.5vw, 12px);
+				cursor: pointer;
+			}
+
+			.submit-modal {
+				position: fixed;
+				top: 0;
+				left: 0;
+				width: 100vw;
+				height: 100vh;
+				background: rgba(0, 0, 0, 0.3);
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				z-index: 999999;
+			}
+
+			.submit-modal-inner {
+				background: #fff;
+				padding: 35px 30px;
+				border-radius: 12px;
+				text-align: center;
+				width: min(90vw, 320px);
+				border: 2px solid #ccc;
+			}
+
+			.submit-btn {
+				padding: 8px 25px;
+				border: none;
+				background: #333;
+				color: #fff;
+				border-radius: 6px;
+				cursor: pointer;
+				margin: 15px 0 8px;
+				font-size: clamp(11px, 2.5vw, 12px);
+				transition: all 0.2s;
+			}
+
+			.refuse-tip {
+				color: red;
+				font-size: clamp(10px, 2.5vw, 12px);
+			}
+
+			/* 修复：黑色惩罚全屏 */
+			.black-screen {
+				position: fixed;
+				top: 0;
+				left: 0;
+				width: 100vw;
+				height: 100vh;
+				background: #000;
+				z-index: 9999999;
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				flex-direction: column;
+				color: #ff0000;
+				font-size: clamp(16px, 4vw, 20px);
+				font-weight: bold;
+				text-align: center;
+				line-height: 1.8;
 			}
 		</style>
 	</head>
@@ -499,41 +524,40 @@
 			</div>
 		</div>
 
-		<!-- 日记容器 与问卷同尺寸 -->
 		<div class="diary-wrap" id="diaryWrap">
-			<!-- 日记第一页 04.24 -->
 			<div class="diary-page1" id="diaryPage1">
 				<div class="diary-date">04.24 阴</div>
 				<div class="diary-content">
 					（大片黑笔划掉无法辨认）<br>
-					今天又看dao你了，在窗bian<br>
-					你以为拉上窗帘就kan不到吗^^<br>
-					墙bi的缝隙、衣柜角落、门后黑影<br>
-					（字迹潦草扭曲）我一zhi在kan你<br>
+					今天又看<span style="color:red;">dao</span>你了，在窗<span style="color:red;">bian</span><br>
+					你以为拉上窗帘就<span style="color:red;">kan</span>不到吗^^<br>
+					墙<span style="color:red;">bi</span>的缝隙、衣柜角落、门后黑影<br>
+					（字迹潦草扭曲）我一<span style="color:red;">zhi</span>在<span style="color:red;">kan</span>你<br>
 					你被吓哭的样子，好可爱好想*哭你<br>
 					乱码：@%……&* 视线不会离开<br>
-					（浅红色晕染痕迹）别躲，跑不掉的<br>
-					好喜欢你好喜欢你好喜欢你喜欢你喜欢......<br>
+					（浅红色晕染痕迹）<span style="color:red;">别躲，跑不掉的</span><br>
+					<span style="color:red;">好喜欢你</span>好喜欢你好喜欢你喜欢......<br>
 				</div>
 				<div class="page-next" id="toPage2">→</div>
 			</div>
-			<!-- 日记第二页 04.25～04.26 原版不变 -->
+
 			<div class="diary-page2" id="diaryPage2">
 				<div class="diary-date">04.25 无天光</div>
 				<div class="diary-content">
-					昨晚你深夜起ye，我都记xia了<br>
-					你回头的瞬间，我cang在暗处<br>
-					（反复涂改：喜欢你｜盯ni｜占有）<br>
-					空房间的脚步声不是幻jue<br>
+					昨晚你深夜起<span style="color:red;">ye</span>，我都记<span style="color:red;">xia</span>了<br>
+					你回头的瞬间，我<span style="color:red;">cang</span>在暗处<br>
+					（反复涂改：<span style="color:red;">喜欢你</span>｜盯<span style="color:red;">ni</span>｜<span
+						style="color:red;">占有</span>）<br>
+					空房间的脚步声不是幻<span style="color:red;">jue</span><br>
 					是我在慢慢靠近你的每一寸空间<br>
-					为什么不愿意说我爱你？<br>
+					<span style="color:red;">为什么不愿意说我爱你？</span><br>
 					（墨迹晕开、断句破碎）<br>
-					回答我，必xu回答我……
+					回答我，必<span style="color:red;">xu</span>回答我……
 				</div>
 				<div class="page-prev" id="toPage1">←</div>
 				<div class="page-next" id="toPage3">→</div>
 			</div>
-			<!-- 日记第三页 全新偏执阴暗内容 -->
+
 			<div class="diary-page3" id="diaryPage3">
 				<div class="diary-date">04.26 永夜</div>
 				<div class="diary-content">
@@ -541,17 +565,19 @@
 					你的呼吸、身体、情绪都该属于我<br>
 					乖乖留在我身边<br>
 					永远、永远，只准看着我一个人<br>
-					我爱你^_^<br>
-					爱你爱你爱你爱......<br>
+					<span style="color:red; font-size:22px; font-weight:bold;">我爱你^_^</span><br>
+					<span style="color:red; font-size:16px;">爱你</span>
+					<span style="color:red; font-size:18px;">爱你</span>
+					<span style="color:red; font-size:21px;">爱你</span>
+					<span style="color:red; font-size:24px;">爱......</span><br>
 				</div>
 				<div class="page-prev" id="toPage2Back">←</div>
 				<div class="page-next" id="toPage4">→</div>
 			</div>
-			<!-- 日记第四页 空白对话页 -->
+
 			<div class="diary-page4" id="diaryPage4">
-				<div class="diary-date"></div>
-				<div class="diary-content" style="text-align:center;margin-top:60px;">
-					<div style="color:#999;font-size:14px;">又只有我自己了……</div>
+				<div class="diary-content" style="text-align:center;">
+					<div style="color:#999;">又只有我自己了……</div>
 					<div style="color:#666;margin:15px 0;">你愿意成为我的爱人，永远陪着我吗？</div>
 					<button class="start-btn" id="agreeBtn" style="margin-top:20px;">我愿意</button>
 				</div>
@@ -699,23 +725,26 @@
 			let q5Timer = null;
 			let q25Timer = null;
 			let q25Elements = [];
-			let isQ25Active = false;
+			let grayMask = null;
 			let wrongCount = 0;
 			let lockSubmitBtn = false;
-			
-			// 全局清理函数（修复所有残留）
-			function clearAllEffects(){
-				stopQ25Effect();
-				if(q5Timer) clearTimeout(q5Timer);
-				document.querySelectorAll('.float-text,.peep-text,.terror-mask,.fullscreen-love,.start-modal,.q16-modal,.submit-modal,.black-screen,.black-full-text,.end-modal').forEach(el=>el.remove());
+			let q25Locked = false;
+
+			function clearAllEffects() {
+				if (current !== 24) {
+					stopQ25Effect();
+				}
+				if (q5Timer) clearTimeout(q5Timer);
+				document.querySelectorAll(
+					'.float-text,.terror-mask,.fullscreen-love,.start-modal,.q16-modal,.submit-modal,.black-screen,.black-full-text,.end-modal'
+				).forEach(el => el.remove());
 				document.body.style.background = "#f7f8fa";
 				boxEl.style.opacity = "1";
 				prevBtn.disabled = false;
 				nextBtn.disabled = false;
 			}
-			
-			// 重置日记到第一页
-			function resetDiary(){
+
+			function resetDiary() {
 				diaryPage1.style.display = "block";
 				diaryPage2.style.display = "none";
 				diaryPage3.style.display = "none";
@@ -723,26 +752,51 @@
 				diaryWrap.style.display = "none";
 			}
 
-			// 第25题 窥视恐怖特效
+			function stopQ25Effect() {
+				if (q25Timer) clearInterval(q25Timer);
+				q25Elements.forEach(el => {
+					if (el && el.parentNode) el.remove();
+				});
+				q25Elements = [];
+				if (grayMask && grayMask.parentNode) grayMask.remove();
+				grayMask = null;
+				q25Locked = false;
+				document.querySelectorAll('.option').forEach(opt => {
+					opt.classList.remove('locked');
+					opt.style.pointerEvents = 'auto';
+				});
+			}
+
 			function startQ25Effect() {
+				if (q25Locked) return;
+
 				stopQ25Effect();
-				document.body.style.background = "#c8c8c8";
-				isQ25Active = true;
+				q25Locked = true;
+				document.querySelectorAll('.option').forEach(opt => {
+					opt.classList.add('locked');
+					opt.style.pointerEvents = 'none';
+				});
+
+				grayMask = document.createElement('div');
+				grayMask.className = "q25-gray-mask";
+				document.body.appendChild(grayMask);
+
 				const peepArr = [
 					"我一直在看着你",
 					"不要躲开哦^^",
 					"我看见你了",
 					"你跑不掉的",
-					"敢躲就*哭你",
+					"我在你身边",
 					"我来找你了^^",
 					"你早就被盯上了",
 					"悄悄看着你",
 					"爱你爱你爱你",
-					"别离开视线"
+					"别离开视线",
+					"你逃不掉的",
+					"一直陪着你"
 				];
 				q25Timer = setInterval(() => {
-					if (!isQ25Active) return;
-					for (let i = 0; i < 12; i++) {
+					for (let i = 0; i < 15; i++) {
 						const p = document.createElement('div');
 						p.className = "peep-text";
 						p.innerText = peepArr[Math.floor(Math.random() * peepArr.length)];
@@ -751,39 +805,30 @@
 						document.body.appendChild(p);
 						q25Elements.push(p);
 					}
-				}, 120);
+				}, 100);
 
 				setTimeout(() => {
 					stopQ25Effect();
 				}, 5000);
 			}
 
-			function stopQ25Effect() {
-				isQ25Active = false;
-				if (q25Timer) clearInterval(q25Timer);
-				q25Elements.forEach(el => {
-					if (el && el.parentNode) el.remove();
-				});
-				q25Elements = [];
-				document.body.style.background = "#f7f8fa";
-			}
-
-			// 初始进入提示弹窗
 			function openStartModal() {
 				clearAllEffects();
+				// 初始化弹窗 隐藏问卷+按钮
+				mainBox.style.display = "none";
+
 				const tipTexts = [
-					"欢迎参与本次心理调查问卷",
-					"请根据自身真实感受选择答案",
-					"题目含特殊互动效果^_^",
-					"准备就绪，开始答题"
+					"<b style='font-size:18px;'>欢迎参与本次心理调查问卷</b>",
+					"<b style='font-size:18px;'>请根据自身真实感受选择答案</b>",
+					"<b style='font-size:18px;'>题目含特殊互动效果^_^</b>",
+					"<b style='font-size:18px;'>准备就绪，开始答题</b>"
 				];
 				let idx = 0;
 				const modal = document.createElement("div");
 				modal.className = "start-modal";
 				const textDom = document.createElement("div");
 				textDom.className = "start-text";
-				textDom.innerText = tipTexts[idx];
-				// 新增红色小字提示
+				textDom.innerHTML = tipTexts[idx];
 				const redTip = document.createElement("div");
 				redTip.className = "tiny-red-tip";
 				redTip.innerText = "注：本问卷包含微恐/窥视/强制，如有不适请立即停止作答";
@@ -793,24 +838,23 @@
 				btnDom.onclick = function() {
 					idx++;
 					if (idx < tipTexts.length) {
-						textDom.innerText = tipTexts[idx];
+						textDom.innerHTML = tipTexts[idx];
 						if (idx === tipTexts.length - 1) {
 							btnDom.innerText = "进入";
 						}
 					} else {
 						modal.remove();
-						boxEl.style.display = 'block';
+						// 进入后才显示问卷
+						mainBox.style.display = "flex";
 						renderQuestion();
 					}
 				};
 				modal.appendChild(textDom);
-				// 插入红色小字
 				modal.appendChild(redTip);
 				modal.appendChild(btnDom);
 				document.body.appendChild(modal);
 			}
 
-			// 第五题特效
 			function startQ5Effect() {
 				if (q5Timer) clearTimeout(q5Timer);
 				q5Timer = setTimeout(() => {
@@ -830,17 +874,16 @@
 						opts.forEach(o => o.style.pointerEvents = "auto");
 						prevBtn.disabled = current === 0;
 						nextBtn.disabled = false;
-					}, 5000);
+					}, 3000);
 				}, 1500);
 			}
 
-			// 乱码库
 			const glitchChars = ["@#￥%", "……&*", "!@#$", "%^&*", "#￥%……", "&*^^", "@*&%", "#￥……&"];
 
-			// 第八题特效
 			function startQ8Effect(selectedIndex) {
-				document.documentElement.style.background = "#ff0000";
-				document.body.style.background = "#ff0000";
+				// 红底全屏（无过渡，强制设置）
+				document.documentElement.style.setProperty('background', '#d80000', 'important');
+				document.body.style.setProperty('background', '#d80000', 'important');
 				boxEl.style.opacity = "0";
 				prevBtn.disabled = true;
 				nextBtn.disabled = true;
@@ -866,27 +909,34 @@
 						el.style.top = (centerY + offsetY) + "vh";
 
 						el.style.fontSize = 12 + Math.random() * 16 + "px";
-						el.style.animationDelay = Math.random() * 0.5 + "s";
 						document.body.appendChild(el);
 						created.push(el);
 					}
 				}, 200);
 
+				// 倒计时结束：文字、红背景 同时瞬间消失 → 再跳转第9题
 				setTimeout(() => {
 					clearInterval(timer);
+
+					// 1. 瞬间清除所有漂浮文字
 					created.forEach(e => e.remove());
+
+					// 2. 瞬间恢复背景色（无过渡，强制覆盖）
+					document.documentElement.style.setProperty('background', '#f7f8fa', 'important');
+					document.body.style.setProperty('background', '#f7f8fa', 'important');
+
+					// 3. 恢复界面可操作
 					boxEl.style.opacity = "1";
-					document.documentElement.style.background = "#f7f8fa";
-					document.body.style.background = "#f7f8fa";
 					prevBtn.disabled = current === 0;
 					nextBtn.disabled = false;
 					document.querySelectorAll('.option').forEach(o => o.style.pointerEvents = "auto");
+
+					// 4. 跳第9题
 					current++;
 					renderQuestion();
 				}, 5000);
 			}
 
-			// 恐怖打字
 			function triggerTerror(text, nextQ) {
 				const mask = document.createElement('div');
 				mask.className = 'terror-mask';
@@ -918,7 +968,6 @@
 				ty();
 			}
 
-			// 全屏打字 我爱你
 			function startLoveTyping() {
 				boxEl.style.opacity = "0";
 				prevBtn.disabled = true;
@@ -928,7 +977,7 @@
 				document.body.appendChild(el);
 				const str = "我爱你";
 				let i = 0;
-				let max = 1500;
+				let max = 1000;
 				let timer = setInterval(() => {
 					el.innerText += str[i % 3];
 					i++;
@@ -941,12 +990,11 @@
 							nextBtn.disabled = false;
 							current++;
 							renderQuestion();
-						}, 400);
+						}, 200);
 					}
 				}, 10);
 			}
 
-			// 第16题弹窗
 			function openQ16Modal() {
 				const texts = ["^^", "亲爱的", "我看见你了", "......"];
 				let index = 0;
@@ -973,93 +1021,97 @@
 				document.body.appendChild(modal);
 			}
 
-			// 黑屏惩罚流程
+			// 修复：黑色全屏惩罚界面
 			function blackPunish() {
 				const screen = document.createElement("div");
 				screen.className = "black-screen";
-				screen.innerHTML = `<div class="threat-red">不要试图违背我^</div>`;
+				screen.innerText = "不要试图违背我^";
 				document.body.appendChild(screen);
 				setTimeout(() => {
-					screen.innerHTML = `<div class="second-chance">再给你一次机会</div>`;
-				}, 3000);
+					screen.innerText = "再给你一次机会";
+					// 缩小版白光发光，更内敛
+					screen.style.color = "#ffffff";
+					screen.style.textShadow = "0 0 2px #fff, 0 0 5px #fff, 0 0 8px #ddd";
+				}, 2000);
 				setTimeout(() => {
 					screen.remove();
 					showInputModal();
-				}, 4500);
+				}, 3500);
 			}
 
-			// 输入验证弹窗
 			function showInputModal() {
 				clearAllEffects();
 				const modal = document.createElement("div");
 				modal.className = "submit-modal";
-				modal.id = "inputModal";
-				modal.innerHTML = `
-					<div>请输入指定文字解锁查看</div>
-					<div class="input-wrap">
-						<input type="text" id="loveInput" placeholder="请输入：我爱你">
-						<button class="submit-btn" id="unlockBtn">继续</button>
-					</div>
-				`;
+				const inner = document.createElement("div");
+				inner.className = "submit-modal-inner";
+				inner.innerHTML = `
+			        <!-- 只给标题加 margin-bottom 调整和输入框的间距，不改其他任何东西 -->
+			        <div style="margin-bottom: 10px;">请输入指定文字解锁查看</div>
+			        <div class="input-wrap">
+			            <input type="text" id="loveInput" placeholder="请输入：我爱你">
+			            <button class="submit-btn" id="unlockBtn">继续</button>
+			        </div>
+			    `;
+				modal.appendChild(inner);
 				document.body.appendChild(modal);
 
 				const input = document.getElementById("loveInput");
 				const unlockBtn = document.getElementById("unlockBtn");
 
-				if (lockSubmitBtn) {
-					unlockBtn.disabled = true;
-					unlockBtn.classList.add("locked");
-				}
+				// 初始化状态（完全保留你原来的逻辑，不碰按钮样式）
+				unlockBtn.disabled = false;
+				unlockBtn.classList.remove("locked");
+				unlockBtn.style.background = "";
+				unlockBtn.style.color = "";
 
 				input.addEventListener('input', function() {
-					if (input.value.trim() === "我爱你") {
-						lockSubmitBtn = false;
+					const val = input.value.trim();
+
+					if (val === "我爱你") {
 						unlockBtn.disabled = false;
 						unlockBtn.classList.remove("locked");
-					} else {
-						if (lockSubmitBtn) {
-							unlockBtn.disabled = true;
-							unlockBtn.classList.add("locked");
-						}
+						unlockBtn.style.background = "";
+						unlockBtn.style.color = "";
 					}
 				});
 
 				unlockBtn.onclick = function() {
 					const val = input.value.trim();
 					if (val === "我爱你") {
-						lockSubmitBtn = false;
-						unlockBtn.disabled = false;
-						unlockBtn.classList.remove("locked");
 						modal.remove();
 						mainBox.style.display = "none";
 						resetDiary();
-						diaryWrap.style.display = "block";
+						diaryWrap.style.display = "flex";
 					} else {
 						wrongCount++;
 						if (wrongCount === 1) {
 							modal.remove();
 							blackPunish();
 						} else {
-							lockSubmitBtn = true;
 							unlockBtn.disabled = true;
 							unlockBtn.classList.add("locked");
+							unlockBtn.style.background = "#ccc";
+							unlockBtn.style.color = "#999";
 						}
 					}
 				};
 			}
 
-			// 提交最终弹窗
 			function showFinalModal() {
 				clearAllEffects();
 				mainBox.style.display = "none";
 				const modal = document.createElement("div");
 				modal.className = "submit-modal";
-				modal.innerHTML = `
+				const inner = document.createElement("div");
+				inner.className = "submit-modal-inner";
+				inner.innerHTML = `
 					<div style="font-size:18px;font-weight:bold;">问卷作答完毕</div>
 					<div style="margin:12px 0;">有一封你的留言是否要查看？</div>
 					<button class="submit-btn" id="yesBtn">是</button>
 					<div class="refuse-tip">不准拒绝^_^</div>
 				`;
+				modal.appendChild(inner);
 				document.body.appendChild(modal);
 				document.getElementById("yesBtn").onclick = function() {
 					modal.remove();
@@ -1067,7 +1119,6 @@
 				};
 			}
 
-			// 日记翻页逻辑
 			document.getElementById("toPage2").onclick = function() {
 				diaryPage1.style.display = "none";
 				diaryPage2.style.display = "block";
@@ -1089,42 +1140,41 @@
 				diaryPage4.style.display = "block";
 			};
 
-			// 我愿意按钮 最终剧情
-			document.getElementById("agreeBtn").onclick = function(){
+			document.getElementById("agreeBtn").onclick = function() {
 				clearAllEffects();
-			    diaryWrap.style.display = "none";
-			    const blackFull = document.createElement("div");
-			    blackFull.className = "black-full-text";
-			    document.body.appendChild(blackFull);
-			
-			    blackFull.innerHTML = `
-			        <div style="display: flex; flex-direction: column; align-items: center; gap: 16px;">
-			            <div class="text-container" style="height:40px; display:flex; align-items:center; justify-content:center;"></div>
-			            <button class="red-confirm-btn" style="display:none;">确认</button>
-			        </div>
-			    `;
-			
-			    const textDom = blackFull.querySelector('.text-container');
-			    const confirmBtn = blackFull.querySelector('.red-confirm-btn');
-			
-			    let textArr = ["我爱你","好喜欢你","想和你一直在一起"];
-			    let textIndex = 0;
-			
-			    function showText(){
-			        if(textIndex < textArr.length){
-			            textDom.innerText = textArr[textIndex];
-			            textIndex++;
-			            if(textIndex === textArr.length){
-			                setTimeout(()=>{
-			                    confirmBtn.style.display = "block";
-			                },1000);
-			            }
-			            setTimeout(showText,1000);
-			        }
-			    }
-			    showText();
-			
-			    confirmBtn.onclick = function(){
+				diaryWrap.style.display = "none";
+				const blackFull = document.createElement("div");
+				blackFull.className = "black-full-text";
+				document.body.appendChild(blackFull);
+				blackFull.innerHTML = `
+				        <div style="display: flex; flex-direction: column; align-items: center; gap: 16px;">
+				            <div class="text-container" style="height:40px; display:flex; align-items:center; justify-content:center;"></div>
+				            <button class="red-confirm-btn" style="display:none;">确认</button>
+				        </div>
+				    `;
+				const textDom = blackFull.querySelector('.text-container');
+				const confirmBtn = blackFull.querySelector('.red-confirm-btn');
+				let textArr = ["我爱你", "好喜欢你", "想和你一直在一起"];
+				let textIndex = 0;
+
+				// 逐句打字播放红字
+				function showText() {
+					if (textIndex < textArr.length) {
+						textDom.innerText = textArr[textIndex];
+						textIndex++;
+						// 最后一句播完 1秒后显示确认按钮
+						if (textIndex === textArr.length) {
+							setTimeout(() => {
+								confirmBtn.style.display = "block";
+							}, 1000);
+						}
+						setTimeout(showText, 1500);
+					}
+				}
+				showText();
+
+				// 确认按钮逻辑不变
+				confirmBtn.onclick = function() {
 					blackFull.remove();
 					const endModal = document.createElement("div");
 					endModal.className = "end-modal";
@@ -1134,8 +1184,7 @@
 						<button class="start-btn" id="restartBtn">确认</button>
 					`;
 					document.body.appendChild(endModal);
-					document.getElementById("restartBtn").onclick = function(){
-						// 完整重置所有状态
+					document.getElementById("restartBtn").onclick = function() {
 						endModal.remove();
 						clearAllEffects();
 						resetDiary();
@@ -1147,9 +1196,9 @@
 						boxEl.style.display = "none";
 						openStartModal();
 					};
-			    };
+				};
 			};
-			
+
 			function renderQuestion() {
 				clearAllEffects();
 				const q = questions[current];
@@ -1165,6 +1214,15 @@
 					div.innerText = item;
 					div.onclick = () => {
 						answers[current] = idx;
+
+						document.querySelectorAll('.option').forEach(opt => opt.classList.remove('selected'));
+						div.classList.add('selected');
+
+						if (current === 24) {
+							startQ25Effect();
+							return;
+						}
+
 						if (current === 2) {
 							idx < 3 ? triggerTerror("真让人难过^^", current + 1) : triggerTerror("真让人高兴^^", current + 1);
 							return;
@@ -1173,25 +1231,14 @@
 							startQ8Effect(idx);
 							return;
 						}
-						if (current === 24) {
-							startQ25Effect();
-						}
 						if (current === 15) {
-							document.querySelectorAll('.option').forEach(opt => opt.classList.remove('selected'));
-							div.classList.add('selected');
-							setTimeout(() => {
-								openQ16Modal();
-							}, 100);
+							setTimeout(() => openQ16Modal(), 100);
 							return;
 						}
 						if (current === 16) {
 							if (idx === 0 || idx === 1) {
 								startLoveTyping();
-							} else if (idx === 2) {
-								div.classList.add("locked");
-								div.innerText = "不许选^";
-								div.onclick = null;
-							} else if (idx === 3) {
+							} else {
 								div.classList.add("locked");
 								div.innerText = "不许选^";
 								div.onclick = null;
@@ -1199,26 +1246,30 @@
 							return;
 						}
 						if (current === 19) {
-							document.querySelectorAll('.option').forEach(opt => opt.classList.remove('selected'));
-							div.classList.add('selected');
+							// A 变字 + 锁定
 							if (idx === 0) {
 								div.innerText = "亲爱的别拒绝我TT";
 								div.classList.add("locked");
 								div.onclick = null;
-							} else if (idx === 1) {
-								div.innerText = "真让人寒心呢^^";
+							}
+							// B 变字 + 锁定
+							if (idx === 1) {
+								div.innerText = "真让人寒心^^";
 								div.classList.add("locked");
 								div.onclick = null;
-							} else if (idx === 2) {
+							}
+							// C 变字 + 锁定
+							if (idx === 2) {
 								div.innerText = "不许给别人开门哦";
 								div.classList.add("locked");
 								div.onclick = null;
-							} else if (idx === 3) {
-								div.innerText = "我爱你";
+							}
+							// D 只变字 + 不锁定、可正常选择
+							if (idx === 3) {
+								div.innerText = "只能看着我";
 							}
 							return;
 						}
-						renderQuestion();
 					};
 					optionsEl.appendChild(div);
 				});
@@ -1227,6 +1278,7 @@
 					startQ5Effect();
 					fromQ4ToQ5 = false;
 				}
+
 				prevBtn.disabled = current === 0;
 				nextBtn.innerText = current === total - 1 ? "提交问卷" : "下一题";
 			}
