@@ -252,7 +252,7 @@
 			}
 
 			.start-text {
-				font-size: clamp(16px, 2.8vw, 18px);
+				font-size: clamp(14px, 2.8vw, 16px);
 				color: #333;
 				line-height: 1.8;
 				text-align: center;
@@ -817,10 +817,10 @@
 				mainBox.style.display = "none";
 
 				const tipTexts = [
-					"<b style='font-size:18px;'>欢迎参与本次心理调查问卷</b>",
-					"<b style='font-size:18px;'>请根据自身真实感受选择答案</b>",
-					"<b style='font-size:18px;'>题目含特殊互动效果^_^</b>",
-					"<b style='font-size:18px;'>准备就绪，开始答题</b>"
+					"<b style='font-size:16px;'>欢迎参与本次心理调查问卷</b>",
+					"<b style='font-size:16px;'>请根据自身真实感受选择答案</b>",
+					"<b style='font-size:16px;'>题目含特殊互动效果^_^</b>",
+					"<b style='font-size:16px;'>准备就绪，开始答题</b>"
 				];
 				let idx = 0;
 				const modal = document.createElement("div");
@@ -1105,7 +1105,7 @@
 				const inner = document.createElement("div");
 				inner.className = "submit-modal-inner";
 				inner.innerHTML = `
-					<div style="font-size:18px;font-weight:bold;">问卷作答完毕</div>
+					<div style="font-size:16px;font-weight:bold;">问卷作答完毕</div>
 					<div style="margin:12px 0;">有一封你的留言是否要查看？</div>
 					<button class="submit-btn" id="yesBtn">是</button>
 					<div class="refuse-tip">不准拒绝^_^</div>
@@ -1178,8 +1178,8 @@
 					const endModal = document.createElement("div");
 					endModal.className = "end-modal";
 					endModal.innerHTML = `
-						<div style="font-size:18px;font-weight:bold;margin-bottom:15px;">问卷已结束</div>
-						<div style="color:#666;margin-bottom:20px;">他在等你</div>
+						<div style="font-size:16px;font-weight:bold;margin-bottom:15px;">问卷已结束</div>
+						<div style="color:#666;margin-bottom:16px;">他在等你</div>
 						<button class="start-btn" id="restartBtn">确认</button>
 					`;
 					document.body.appendChild(endModal);
