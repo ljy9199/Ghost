@@ -1304,5 +1304,24 @@
 
 			openStartModal();
 		</script>
+		<audio id="bgm" src="bgm.m4a" loop preload="auto">
+		<script>
+		let bgm = document.getElementById('bgm');
+		// 先静音偷偷播放
+		bgm.muted = true;
+		bgm.play().catch(() => {});
+		
+		// 页面任意点击/触摸 立刻解锁声音
+		function openBgm() {
+		    bgm.muted = false;
+		    bgm.volume = 0.6;
+		    bgm.play();
+		    // 只触发一次
+		    document.removeEventListener('click', openBgm);
+		    document.removeEventListener('touchstart', openBgm);
+		}
+		document.addEventListener('click', openBgm);
+		document.addEventListener('touchstart', openBgm);
+		</script>
 	</body>
 </html>
