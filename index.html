@@ -1307,8 +1307,6 @@
 		let bgm = document.getElementById('bgm');
 		bgm.muted = true;
 		bgm.play().catch(() => {});
-		
-		// 页面任意点击/触摸 立刻解锁声音
 		function openBgm() {
 		    bgm.muted = false;
 		    bgm.volume = 0.6;
