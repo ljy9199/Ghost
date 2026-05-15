@@ -1279,6 +1279,7 @@
 				}
 
 				prevBtn.disabled = current === 0;
+				nextBtn.disabled = answers[current] === null;
 				nextBtn.innerText = current === total - 1 ? "提交问卷" : "下一题";
 			}
 
@@ -1290,6 +1291,7 @@
 				}
 			};
 			nextBtn.onclick = () => {
+				if (answers[current] === null) return;
 				clearAllEffects();
 				if (current === 3) fromQ4ToQ5 = true;
 				if (current < total - 1) {
